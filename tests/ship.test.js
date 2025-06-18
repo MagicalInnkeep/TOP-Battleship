@@ -1,4 +1,4 @@
-import {ship} from '../src/classes/ship.js'
+import {Ship} from '../src/classes/ship.js'
 
 // Tests for ships creation
 
@@ -10,19 +10,19 @@ describe("Create ships", () => {
             { input1: "Destroyer", input2: 3, expected: {name: "Destroyer", size:3, hits:0} },
         ];
         analyzeTestCases.forEach((testCase) => {
-            const object = new ship(testCase.input1, testCase.input2);
+            const object = new Ship(testCase.input1, testCase.input2);
             expect(object).toEqual(testCase.expected);
         })
     })
 })
 
 it("Error generation on invalid ship size",() => {
-    expect(() => {const invalid = new ship("Error",0)}).toThrow();
+    expect(() => {const invalid = new Ship("Error",0)}).toThrow();
 });
 
 // Test for isSunk() and therefor also hit().
 it("Check if ship is sunk",() =>{
-    const ship1 = new ship("BattleShip",4);
+    const ship1 = new Ship("BattleShip",4);
     expect(ship1.isSunk()).toBe(false);
     ship1.hit();
     expect(ship1.isSunk()).toBe(false);

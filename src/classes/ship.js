@@ -1,4 +1,4 @@
-export class ship {
+export class Ship {
     constructor(name,size){
         if(size<=0){
             throw new Error("Invalid ship size: Must be bigger then 0")
