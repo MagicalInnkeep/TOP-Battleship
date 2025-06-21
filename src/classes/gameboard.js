@@ -1,5 +1,7 @@
+import { Ship } from "./ship";
+
 export class Gameboard {
-    
+
     constructor(){
         this.board = this.generateBoard();
         this.ships = [];
@@ -17,5 +19,31 @@ export class Gameboard {
             board.push(row);
           }
           return board;
+    }
+
+    placeShip(ship,x,y,orient){
+        if(x<0 || y<0){ return false;}
+        if(this.checkPlacement(ship,x,y,orient)){
+            //TODO
+            for(let i=0;i<=ship.size;i++){
+                const posX = orient==="H" ? x+i : x; 
+                const posY = orient==="H" ? y : y+i;
+                this.board[posX][posY]=ship.name; 
+            }
+
+            return true
+        }
+        return false;
+    }
+
+    checkPlacement(ship,x,y,orient){
+        if(orient==="H" && x+ship.size>=10){ return false;}
+        if(orient==="V" && y+ship.size>=10){ return false;}
+        for(let i=0;i<=ship.size;i++){
+            const xTest = orient==="H" ? x+i : x; 
+            const yTest = orient==="H" ? y : y+i; 
+            if(this.board[xTest][yTest]  !== null){ ;return false;}
+        }
+        return true
     }
 }
