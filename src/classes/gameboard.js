@@ -28,7 +28,7 @@ export class Gameboard {
             for(let i=0;i<=ship.size;i++){
                 const posX = orient==="H" ? x+i : x; 
                 const posY = orient==="H" ? y : y+i;
-                this.board[posX][posY]=ship.name; 
+                this.board[posX][posY]=ship; 
             }
 
             return true
@@ -45,5 +45,20 @@ export class Gameboard {
             if(this.board[xTest][yTest]  !== null){ ;return false;}
         }
         return true
+    }
+
+    receiveAttack(x,y){
+        if(this.board[x][y] === "hit" || this.board[x][y] ==="miss"){ return "AlreadyAttacked"}
+        else if(this.board[x][y] !== null){
+            const hitShip = this.board[x][y];
+            hitShip.hit();
+            this.board[x][y] = "hit";
+            return "Hit"
+        }
+        else{
+            this.board[x][y] = "miss";
+            return "Miss"
+        }
+
     }
 }
