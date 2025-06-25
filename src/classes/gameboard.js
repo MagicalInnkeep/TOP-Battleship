@@ -29,8 +29,9 @@ export class Gameboard {
                 const posX = orient==="H" ? x+i : x; 
                 const posY = orient==="H" ? y : y+i;
                 this.board[posX][posY]=ship; 
+                
             }
-
+            this.ships.push(ship);
             return true
         }
         return false;
@@ -59,6 +60,9 @@ export class Gameboard {
             this.board[x][y] = "miss";
             return "Miss"
         }
+    }
 
+    checkSunkFleet(){
+        return this.ships.every((ship) => ship.isSunk())
     }
 }

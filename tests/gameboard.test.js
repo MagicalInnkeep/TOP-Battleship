@@ -111,3 +111,34 @@ it("receiveAttack: already-hit",() =>{
     expect(gameboard.receiveAttack(testCase.hitx, testCase.hity))
         .toBe(testCase.expected2);
 })
+
+//Test checkSunkFleet
+
+it("checkSunkFleet: all ships are sunk",() =>{
+    const testCase = {name: "Canoe", size:1, x:0, y:0, orient: "H", hitx: 0, hity: 0, expected: true};
+    const ship = new Ship(testCase.name, testCase.size);
+    const gameboard = new Gameboard();
+
+    gameboard.placeShip(ship, testCase.x, testCase.y, testCase.orient);
+    gameboard.receiveAttack(testCase.hitx, testCase.hity)
+
+    expect(gameboard.checkSunkFleet())
+        .toBe(testCase.expected);
+
+})
+
+it("checkSunkFleet: not all ships are sunk",() =>{
+    const testCase = { name1: "BattleShip", size1: 4, x1: 6, y1: 4, orient1: "V", name2: "Cannoe", size2: 1, x2: 0, y2:0, orient2: "H", hitx: 0, hity:0, expected: false };
+    const ship1 = new Ship(testCase.name1, testCase.size1);
+    const ship2 = new Ship(testCase.name2, testCase.size2);
+    const gameboard = new Gameboard();
+    
+    gameboard.placeShip(ship1,testCase.x1,testCase.y2, testCase.orient1);
+    gameboard.placeShip(ship2,testCase.x2,testCase.y2,testCase.orient2);
+
+    gameboard.receiveAttack(testCase.hitx, testCase.hity)
+    
+    expect(gameboard.checkSunkFleet())
+        .toBe(testCase.expected);
+
+})
