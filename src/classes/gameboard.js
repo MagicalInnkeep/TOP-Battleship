@@ -5,8 +5,6 @@ export class Gameboard {
     constructor(){
         this.board = this.generateBoard();
         this.ships = [];
-        this.shipHits = [];
-        this.missHits = [];
     }
 
     generateBoard(){
