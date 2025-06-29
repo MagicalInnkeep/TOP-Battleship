@@ -1,6 +1,6 @@
 import { Gameboard } from "./gameboard";
 
-export class player{
+export class Player{
 
     constructor (name, human){
         this.name= name;
@@ -8,12 +8,13 @@ export class player{
         this.Gameboard = new Gameboard();
     }
 
-    aiTargetting() {
-        let shot;
+    aiTargetting(callback) {
+        let shot= null;
+        console.log("hi");
         while(shot ==="AlreadyAttacked"|| shot===null){
             let x = Math.floor(Math.random()*10);
             let y = Math.floor(Math.random()*10);
-            shot = this.Gameboard.receiveAttack(x,y);
+            shot = callback(x,y);
         }
     }
 
