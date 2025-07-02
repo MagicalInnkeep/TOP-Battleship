@@ -1,5 +1,3 @@
-import { Ship } from "./ship";
-
 export class Gameboard {
 
     constructor(){
@@ -62,5 +60,9 @@ export class Gameboard {
 
     checkSunkFleet(){
         return this.ships.every((ship) => ship.isSunk())
+    }
+
+    reset(){
+        this.board=this.generateBoard();
     }
 }

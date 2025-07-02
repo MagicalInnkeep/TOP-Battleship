@@ -6,6 +6,8 @@ export class DOMController{
         let gameController;
         this.init();
         this.playerSelection();
+        this.state=0;
+        this.round=0;
     }
 
     init(){
@@ -86,16 +88,42 @@ export class DOMController{
         this.displayCurrentPlayer('Setup',this.gameController.currentPlayer);
         //Display grid
         this.gameController.computerShipPlacement(this.gameController.currentPlayer);
-        this.displayGrid()
+        this.displayGrid('nofog',this.gameController.currentPlayer, '.content');
         //Add eventListeners
+        const container = document.querySelector(".content");
 
-        //Finish Button
+        //Buttons
+        const btnContainer = document.createElement("div");
+        btnContainer.setAttribute("class","btnContainer");
+        const btnReGenerate = document.createElement("button");
+        btnReGenerate.textContent=`Random positions`;
+
+        btnReGenerate.addEventListener('click', (event) =>{
+            event.preventDefault();
+            container.innerHTML='';
+            this.gameController.currentPlayer.Gameboard.reset();
+            this.setupPlayer();
+        });
+
+        const btnFinished = document.createElement("button");
+        btnFinished.textContent="Ready"
+
+        btnFinished.addEventListener('click', (event)=>{
+            event.preventDefault();
+            this.state+=1; //needed persistent tracker to define function of button.
+            this.changePlayer(this.state>1?this.playRound.bind(this):this.setupPlayer.bind(this));
+        })
+
+        btnContainer.appendChild(btnReGenerate);
+        btnContainer.appendChild(btnFinished);
+        container.appendChild(btnContainer);
+
         
     }
 
-    changePlayer(){
+    changePlayer(callback){
         //Change player
-        this.gameController.changePlayer();
+        this.gameController.nextPlayer();
         //Display Wait  screen
         this.displayCurrentPlayer("Waiting", this.gameController.currentPlayer);
         const container = document.querySelector(".content");
@@ -103,18 +131,25 @@ export class DOMController{
         
 
         const btnNextPlayer = document.createElement("button");
-        btnNextPlayer.textContent=`Waiting on ${this.gameController.currentPlayer}`;
+        btnNextPlayer.textContent=`Waiting on ${this.gameController.currentPlayer.name}`;
 
-        btnNextlayer.addEventListener('click', (event) =>{
+        btnNextPlayer.addEventListener('click', (event) =>{
             event.preventDefault();
             container.innerHTML = '';
-            this.setupPlayer();
+            callback();
         });
+
+        const btnContainer = document.createElement("div");
+        btnContainer.setAttribute("class","btnContainer");
+
+        btnContainer.appendChild(btnNextPlayer);
+        container.appendChild(btnContainer);
     }
 
     displayCurrentPlayer(phase,player){
         const playerName= player.name;
         const sidebar = document.querySelector("#mySidebar");
+        sidebar.innerHTML='';
 
         const playerDisplay = document.createElement("div");
         playerDisplay.textContent=`${phase}:   ${playerName}`;
@@ -123,8 +158,8 @@ export class DOMController{
 
     }
 
-    displayGrid(){
-        const container = document.querySelector(".content");
+    displayGrid(mode,player,element){
+        const container = document.querySelector(element);
 
         const gameEnv = document.createElement("div");
         gameEnv.setAttribute("class","gameEnv");
@@ -132,10 +167,10 @@ export class DOMController{
             for(let j=0;j<10;j++){
                 const cell = document.createElement("div");
                 cell.setAttribute("id",`cell${i}${j}`);
-                const val = this.gameController.currentPlayer.Gameboard.board[i][j];
+                const val = player.Gameboard.board[i][j];
                 let celcontent;
                 if(typeof val==='object' && val!==null){
-                    celcontent=val.name;
+                    celcontent=mode=='nofog'?val.name:'null';
                 }
                 else{
                     celcontent=val===null?'null':val;
@@ -148,5 +183,35 @@ export class DOMController{
         }
 
         container.appendChild(gameEnv);
+    }
+
+    playRound(){
+        //Update sidebar
+        this.round+=1;
+        this.displayCurrentPlayer(`round ${this.round}`,this.gameController.currentPlayer);
+
+        //Clear container.
+        const container = document.querySelector(".content");
+        container.innerHTML = '';
+
+        //Create new main div
+        const mainDiv = document.createElement("div");
+        mainDiv.setAttribute("class","mainBattleScreen");
+
+        //Create div for both grids.
+        const divLeft = document.createElement("div");
+        divLeft.setAttribute("class","targetArea");
+        const divRight = document.createElement("div");
+        divRight.setAttribute("class","ownArea");
+
+        mainDiv.appendChild(divLeft);
+        mainDiv.appendChild(divRight);
+        container.appendChild(mainDiv);
+        //Add grid of adversary to left div
+        this.displayGrid('',this.gameController.otherPlayer(),".targetArea");
+        //Add own grid on right div.
+        this.displayGrid('nofog',this.gameController.currentPlayer,'.ownArea');
+
+
     }
 }
