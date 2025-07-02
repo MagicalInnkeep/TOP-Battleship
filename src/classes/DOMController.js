@@ -59,7 +59,7 @@ export class DOMController{
             this.gameController = new GameController(player1Name,true,player2Name,player2Bool);
 
             container.removeChild(playerCreate);
-            this.domGamePlay();
+            this.setupGamePlay();
         });
 
         playerTwoSwitch.appendChild(playerTwoInputSwitch); 
@@ -76,20 +76,77 @@ export class DOMController{
         container.appendChild(playerCreate);
     }
 
-    domGamePlay(){
-        console.log("Play the game!");
-        console.log(this.gameController);
-        this.displayCurrentPlayer(this.gameController.currentPlayer);
+    setupGamePlay(){
+        console.log("Setup the game!");
+        this.setupPlayer();
     }
 
-    displayCurrentPlayer(player){
+    setupPlayer(){
+        //sidebar populate
+        this.displayCurrentPlayer('Setup',this.gameController.currentPlayer);
+        //Display grid
+        this.gameController.computerShipPlacement(this.gameController.currentPlayer);
+        this.displayGrid()
+        //Add eventListeners
+
+        //Finish Button
+        
+    }
+
+    changePlayer(){
+        //Change player
+        this.gameController.changePlayer();
+        //Display Wait  screen
+        this.displayCurrentPlayer("Waiting", this.gameController.currentPlayer);
+        const container = document.querySelector(".content");
+        container.innerHTML = '';
+        
+
+        const btnNextPlayer = document.createElement("button");
+        btnNextPlayer.textContent=`Waiting on ${this.gameController.currentPlayer}`;
+
+        btnNextlayer.addEventListener('click', (event) =>{
+            event.preventDefault();
+            container.innerHTML = '';
+            this.setupPlayer();
+        });
+    }
+
+    displayCurrentPlayer(phase,player){
         const playerName= player.name;
+        const sidebar = document.querySelector("#mySidebar");
+
+        const playerDisplay = document.createElement("div");
+        playerDisplay.textContent=`${phase}:   ${playerName}`;
+
+        sidebar.appendChild(playerDisplay);
+
+    }
+
+    displayGrid(){
         const container = document.querySelector(".content");
 
-        const playerDisplay = document.createElement("h1");
-        playerDisplay.textContent=playerName;
+        const gameEnv = document.createElement("div");
+        gameEnv.setAttribute("class","gameEnv");
+        for(let i=0;i<10;i++){
+            for(let j=0;j<10;j++){
+                const cell = document.createElement("div");
+                cell.setAttribute("id",`cell${i}${j}`);
+                const val = this.gameController.currentPlayer.Gameboard.board[i][j];
+                let celcontent;
+                if(typeof val==='object' && val!==null){
+                    celcontent=val.name;
+                }
+                else{
+                    celcontent=val===null?'null':val;
+                }
 
-        container.appendChild(playerDisplay);
+                cell.setAttribute("class",`content-${celcontent}`)
 
+                gameEnv.appendChild(cell);
+            }
+        }
+
+        container.appendChild(gameEnv);
     }
 }

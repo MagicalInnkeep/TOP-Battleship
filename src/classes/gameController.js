@@ -12,10 +12,11 @@ export class GameController {
             {name:"Battleship",length:4},
             {name:"Destroyer",length:3},
             {name:"Submarine" ,length:3},
-            {name:"Patrol Boat",length:2} 
+            {name:"PatrolBoat",length:2} 
         ]
     }
 
+    //place ships
     computerShipPlacement(player){
         this.ships.forEach((shipInfo)=>{
             const ship = new Ship(shipInfo.name, shipInfo.length);
@@ -23,10 +24,15 @@ export class GameController {
             while(!placed){
                 const x = Math.floor(Math.random()*10);
                 const y = Math.floor(Math.random()*10);
-                const o = Math.floor(Math.random())==0?"H":"V";
-                placed  = player.placeShip(ship,x,y,o);
+                const o = Math.floor(Math.random()*2)==0?"H":"V";
+                placed  = player.Gameboard.placeShip(ship,x,y,o);
             }
         })
+    }
+
+    //Change players
+    nextPlayer(){
+        currentPlayer===this.player1?this.player2:this.player1;
     }
 
 }

@@ -23,7 +23,7 @@ export class Gameboard {
         if(x<0 || y<0){ return false;}
         if(this.checkPlacement(ship,x,y,orient)){
             //TODO
-            for(let i=0;i<=ship.size;i++){
+            for(let i=0;i<ship.size;i++){
                 const posX = orient==="H" ? x+i : x; 
                 const posY = orient==="H" ? y : y+i;
                 this.board[posX][posY]=ship; 

@@ -6,6 +6,11 @@
     --toggle-btn-bg: #e5e7eb;
     --toggle-btn-text: #111;
     --border-color: #ddd;
+    --color-Carrier: #FFD1DC;
+    --color-Battleship:#C1F0DC;
+    --color-Destroyer:#FFF5BA;
+    --color-Submarine:#AEEAFD;
+    --color-PatrolBoat:#FFDAC1;
 }
 
 /* Dark Mode */
@@ -17,6 +22,11 @@
     --toggle-btn-bg: #333;
     --toggle-btn-text: #fff;
     --border-color: #444;
+    --color-Carrier: #FF4F81;
+    --color-Battleship:#3EF8B3;
+    --color-Destroyer:#FFF95B;
+    --color-Submarine: #4FC3FF;
+    --color-PatrolBoat:#FF9E7C;;
 }
 
 /* Apply to Body */
@@ -59,10 +69,34 @@ body {
 .dark-mode .svg-icon {
     filter: invert(86%);
 }
+.sidebar {
+    height: 100vh;
+    width: 100px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    
+    transition: width 0.5s ease, background 0.3s ease, color 0.3s ease;
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
 
+
+.sidebar > div {
+    font-size: 25px;
+    font-weight: bold;
+    transform: rotate(-90deg);
+    transform-origin: center center;
+    white-space: nowrap;
+  }
 /* Main Content */
 .main {
-    margin-left: 50px;
+    margin-left: 100px;
     transition: margin-left 0.5s ease;
     display: flex;
     flex-direction: column;
@@ -222,3 +256,44 @@ body {
   .slider.round:before {
     border-radius: 50%;
   }
+
+  /*GRID*/
+  .gameEnv {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    width: 1000px;
+    margin-left: 50px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.gameEnv div {
+    width: 100px;
+    height: 100px;
+    background-color: var(--bg-color);
+    border: 1px solid var(--toggle-btn-text);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    box-sizing: border-box;
+}
+
+.gameEnv>.content-Carrier {
+    background-color: var(--color-Carrier)!important;
+}
+.gameEnv>.content-Battleship {
+    background-color: var(--color-Battleship)!important;
+}
+.gameEnv>.content-Destroyer {
+    background-color: var(--color-Destroyer)!important;
+}
+.gameEnv>.content-Submarine {
+    background-color: var(--color-Submarine)!important;
+}
+.gameEnv>.content-PatrolBoat {
+    background-color: var(--color-PatrolBoat)!important;
+}
