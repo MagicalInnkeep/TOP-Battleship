@@ -178,9 +178,16 @@ export class DOMController{
 
                 cell.setAttribute("class",`content-${celcontent}`)
 
+                
+
                 gameEnv.appendChild(cell);
             }
         }
+
+        gameEnv.addEventListener('click', (event)=>{
+            const clickedCell = event.target.id.slice(4);
+            console.log(clickedCell);
+        });
 
         container.appendChild(gameEnv);
     }
@@ -201,13 +208,21 @@ export class DOMController{
         //Create div for both grids.
         const divLeft = document.createElement("div");
         divLeft.setAttribute("class","targetArea");
+        const h3Left = document.createElement("h3");
+        h3Left.textContent="Target Area"
+
         const divRight = document.createElement("div");
         divRight.setAttribute("class","ownArea");
+        const h3Right = document.createElement("h3");
+        h3Right.textContent="Own Area"
 
+        divLeft.appendChild(h3Left);
+        divRight.appendChild(h3Right);
         mainDiv.appendChild(divLeft);
         mainDiv.appendChild(divRight);
         container.appendChild(mainDiv);
         //Add grid of adversary to left div
+
         this.displayGrid('',this.gameController.otherPlayer(),".targetArea");
         //Add own grid on right div.
         this.displayGrid('nofog',this.gameController.currentPlayer,'.ownArea');

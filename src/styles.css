@@ -284,6 +284,7 @@ body {
     margin-left: 50px;
     margin-top: 20px;
     margin-bottom: 20px;
+    margin-right: 50px;
 }
 
 .gameEnv div {
@@ -316,3 +317,25 @@ body {
 .gameEnv>.content-PatrolBoat {
     background-color: var(--color-PatrolBoat)!important;
 }
+
+.mainBattleScreen{
+    display: flex;
+    flex-direction: row;
+}
+
+.ownArea{
+    height: 100vh;
+    background-color: var(--border-color);
+    text-align: right;
+}
+
+.targetArea h3{
+    margin-top: 5px;
+    margin-left: 25px;
+}
+
+.ownArea h3{
+    margin-top: 5px;
+    margin-right: 25px;
+}
+
