@@ -8,6 +8,7 @@ export class DOMController{
         this.playerSelection();
         this.state=0;
         this.round=0;
+        this.loss=[];
     }
 
     init(){
@@ -84,6 +85,7 @@ export class DOMController{
     }
 
     setupPlayer(){
+        console.log("Setup Player")
         //sidebar populate
         this.displayCurrentPlayer('Setup',this.gameController.currentPlayer);
         //Display grid
@@ -122,28 +124,41 @@ export class DOMController{
     }
 
     changePlayer(callback){
-        //Change player
-        this.gameController.nextPlayer();
-        //Display Wait  screen
-        this.displayCurrentPlayer("Waiting", this.gameController.currentPlayer);
+
         const container = document.querySelector(".content");
         container.innerHTML = '';
-        
 
-        const btnNextPlayer = document.createElement("button");
-        btnNextPlayer.textContent=`Waiting on ${this.gameController.currentPlayer.name}`;
+        const state =this.checkVictory();
+        this.displayRound = Math.round(this.round/2);
+        if(this.displayRound%2===0 && state !== false){
+            const divEnd = document.createElement("div");
+            divEnd.textContent=state==="stale"?"Mutual Destruction!":`${state} has lossed all ships!`
 
-        btnNextPlayer.addEventListener('click', (event) =>{
-            event.preventDefault();
-            container.innerHTML = '';
-            callback();
-        });
+            container.appendChild(divEnd);
+        }
+        else{
+            console.log("Change Player");
+            //Change player
+            this.gameController.nextPlayer();
+            //Display Wait  screen
+            this.displayCurrentPlayer("Waiting", this.gameController.currentPlayer);
+            
 
-        const btnContainer = document.createElement("div");
-        btnContainer.setAttribute("class","btnContainer");
+            const btnNextPlayer = document.createElement("button");
+            btnNextPlayer.textContent=`Waiting on ${this.gameController.currentPlayer.name}`;
 
-        btnContainer.appendChild(btnNextPlayer);
-        container.appendChild(btnContainer);
+            btnNextPlayer.addEventListener('click', (event) =>{
+                event.preventDefault();
+                container.innerHTML = '';
+                callback();
+            });
+
+            const btnContainer = document.createElement("div");
+            btnContainer.setAttribute("class","btnContainer");
+
+            btnContainer.appendChild(btnNextPlayer);
+            container.appendChild(btnContainer);
+        }
     }
 
     displayCurrentPlayer(phase,player){
@@ -159,6 +174,7 @@ export class DOMController{
     }
 
     displayGrid(mode,player,element){
+        console.log("DisplayGrid");
         const container = document.querySelector(element);
 
         const gameEnv = document.createElement("div");
@@ -185,22 +201,47 @@ export class DOMController{
         }
 
         gameEnv.addEventListener('click', (event)=>{
-            const clickedCell = event.target.id.slice(4);
-            console.log(clickedCell);
+            const clickedX = event.target.id.slice(4)[0];
+            const clickedY = event.target.id.slice(4)[1];
+            if(mode==='nofog' || mode==='shot'){}
+            else{
+                console.log(clickedX+";"+clickedY);
+                player.Gameboard.receiveAttack(clickedX,clickedY);
+                const container = document.querySelector(".targetArea");
+                container.innerHTML = '';
+                this.displayGrid('',this.gameController.otherPlayer(),".targetArea");
+                mode='shot';
+                if(player.Gameboard.checkSunkFleet()){
+                    console.log("Total Loss!")
+                    this.loss.push(player);
+                }
+                const btnFinished = document.createElement("button");
+                btnFinished.textContent="Ready"
+
+                 btnFinished.addEventListener('click', (event)=>{
+                    event.preventDefault();
+                    this.changePlayer(this.playRound.bind(this));
+                })
+
+                container.appendChild(btnFinished);
+            }
         });
 
         container.appendChild(gameEnv);
     }
 
     playRound(){
+        console.log("PlayRound");
         //Update sidebar
         this.round+=1;
-        this.displayCurrentPlayer(`round ${this.round}`,this.gameController.currentPlayer);
+        this.displayRound = Math.round(this.round/2);
+        
+        this.displayCurrentPlayer(`round ${this.displayRound}`,this.gameController.currentPlayer);
 
         //Clear container.
         const container = document.querySelector(".content");
         container.innerHTML = '';
-
+        
         //Create new main div
         const mainDiv = document.createElement("div");
         mainDiv.setAttribute("class","mainBattleScreen");
@@ -226,7 +267,18 @@ export class DOMController{
         this.displayGrid('',this.gameController.otherPlayer(),".targetArea");
         //Add own grid on right div.
         this.displayGrid('nofog',this.gameController.currentPlayer,'.ownArea');
+    }
 
-
+    checkVictory() {
+        console.log(this.loss);
+        if(this.loss.length===0){
+            return false;
+        }
+        if(this.loss.length===2){
+            return "stale";
+        }
+        if(this.loss.length===1){
+            return this.loss[0].name;
+        }
     }
 }

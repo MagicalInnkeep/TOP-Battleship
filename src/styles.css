@@ -317,6 +317,13 @@ body {
 .gameEnv>.content-PatrolBoat {
     background-color: var(--color-PatrolBoat)!important;
 }
+.gameEnv>.content-hit {
+    background-color: red;
+}
+
+.gameEnv>.content-miss {
+    background-color: blue;
+}
 
 .mainBattleScreen{
     display: flex;
