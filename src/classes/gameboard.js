@@ -64,5 +64,6 @@ export class Gameboard {
 
     reset(){
         this.board=this.generateBoard();
+        this.ships=[];
     }
 }

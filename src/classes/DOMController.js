@@ -130,7 +130,8 @@ export class DOMController{
 
         const state =this.checkVictory();
         this.displayRound = Math.round(this.round/2);
-        if(this.displayRound%2===0 && state !== false){
+        if(this.round%2===0 && state !== false){
+
             const divEnd = document.createElement("div");
             divEnd.textContent=state==="stale"?"Mutual Destruction!":`${state} has lossed all ships!`
 
@@ -212,7 +213,6 @@ export class DOMController{
                 this.displayGrid('',this.gameController.otherPlayer(),".targetArea");
                 mode='shot';
                 if(player.Gameboard.checkSunkFleet()){
-                    console.log("Total Loss!")
                     this.loss.push(player);
                 }
                 const btnFinished = document.createElement("button");
