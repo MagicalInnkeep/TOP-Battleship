@@ -346,3 +346,8 @@ body {
     margin-right: 25px;
 }
 
+.gameOver{
+    margin-top: 25px;
+    margin-left: 25px;
+    font-size: x-large;
+}

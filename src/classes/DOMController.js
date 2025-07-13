@@ -149,9 +149,19 @@ export class DOMController{
         if(this.round%2===0 && state !== false){
 
             const divEnd = document.createElement("div");
+            divEnd.setAttribute("class","gameOver");
             divEnd.textContent=state==="stale"?"Mutual Destruction!":`${state} has lossed all ships!`
 
             container.appendChild(divEnd);
+
+            // Sidebar update
+            const sidebar = document.querySelector("#mySidebar");
+            sidebar.innerHTML='';
+
+            const playerDisplay = document.createElement("div");
+            playerDisplay.textContent=`Gameover!`;
+
+            sidebar.appendChild(playerDisplay);
         }
         else if(this.multiplayer){
             console.log("Change Player");
@@ -228,7 +238,7 @@ export class DOMController{
         gameEnv.addEventListener('click', (event)=>{
             const clickedX = event.target.id.slice(4)[0];
             const clickedY = event.target.id.slice(4)[1];
-            if(gameMode==='nofog' || gameMode==='shot'){}
+            if (clickedX===undefined || clickedY===undefined ||gameMode==='nofog' || gameMode==='shot'){}
             else{
                 player.Gameboard.receiveAttack(clickedX,clickedY);
                 const container = document.querySelector(".targetArea");
@@ -238,15 +248,29 @@ export class DOMController{
                 const btnFinished = document.createElement("button");
                 btnFinished.textContent="Ready"
 
-                 btnFinished.addEventListener('click', (event)=>{
+                const onReady = (event) => {
                     event.preventDefault();
-                    if(player.Gameboard.checkSunkFleet()){
+                    if (player.Gameboard.checkSunkFleet()) {
                         this.loss.push(player);
                     }
-                    this.changePlayer(this.multiplayer?this.playRound.bind(this):this.aiPlayRound.bind(this));
-                })
+                    this.changePlayer(this.multiplayer ? this.playRound.bind(this) : this.aiPlayRound.bind(this));
+                };
+                
+                btnFinished.addEventListener('click', onReady);
+                
+                // Add keydown listener for Enter key
+                window.addEventListener('keydown', function handleEnter(e) {
+                    if (e.key === 'Enter') {
+                        onReady(e);
+                        window.removeEventListener('keydown', handleEnter); // Clean up to avoid multiple triggers
+                    }
+                });
 
-                container.appendChild(btnFinished);
+                const btnContainer = document.createElement("div");
+                btnContainer.setAttribute("class","btnContainer");
+    
+                btnContainer.appendChild(btnFinished);
+                container.appendChild(btnContainer);
             }
         });
 
@@ -299,6 +323,7 @@ export class DOMController{
      * AI activity for playing a round;
      */
     aiPlayRound() {
+        this.round+=1;
         const player= this.gameController.otherPlayer()
         const playerBoard = player.Gameboard;
         player.aiTargetting(playerBoard.receiveAttack.bind(playerBoard));
@@ -315,6 +340,9 @@ export class DOMController{
             return false;
         }
         if(this.loss.length===2){
+            if(this.loss[0].name===this.loss[1].name){ //Shouldn't occur but better safe then sorry
+                return this.loss[0].name;
+            }
             return "stale";
         }
         if(this.loss.length===1){
