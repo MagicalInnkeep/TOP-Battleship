@@ -10,7 +10,6 @@ export class Player{
 
     aiTargetting(callback) {
         let shot= null;
-        console.log("hi");
         while(shot ==="AlreadyAttacked"|| shot===null){
             let x = Math.floor(Math.random()*10);
             let y = Math.floor(Math.random()*10);

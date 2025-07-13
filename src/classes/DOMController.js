@@ -17,8 +17,13 @@ export class DOMController{
         document.querySelector("#lightdark").addEventListener('click',toggleMode);
     }
 
+    /*
+    Creates dom for User Input of players
+    Creates a new gameController
+    and calles setupGamePlay
+    */
     playerSelection(){
-        //Creates dom for User Input of players
+        
 
         const container = document.querySelector(".content");
 
@@ -46,9 +51,9 @@ export class DOMController{
         playerTwoSwitch.setAttribute("class", "switch");
         const playerTwoInputSwitch = document.createElement("input");
         playerTwoInputSwitch.setAttribute("type","checkbox");
+        playerTwoInputSwitch.setAttribute("id","human");
         const playerTwoSpan = document.createElement("span");
         playerTwoSpan.setAttribute("class","slider round");
-        playerTwoSpan.setAttribute("id","human");
 
         const btnCreatePlayer = document.createElement("button");
         btnCreatePlayer.textContent="Play";
@@ -57,12 +62,12 @@ export class DOMController{
             event.preventDefault();
             const player1Name = document.querySelector("#playerOne").value;
             const player2Name = document.querySelector("#playerTwo").value;
-            const player2Bool = document.querySelector("#human").checked; 
+            this.multiplayer = document.querySelector("#human").checked; 
 
-            this.gameController = new GameController(player1Name,true,player2Name,player2Bool);
+            this.gameController = new GameController(player1Name,true,player2Name,this.multiplayer);
 
             container.removeChild(playerCreate);
-            this.setupGamePlay();
+            this.setupPlayer();
         });
 
         playerTwoSwitch.appendChild(playerTwoInputSwitch); 
@@ -79,50 +84,61 @@ export class DOMController{
         container.appendChild(playerCreate);
     }
 
-    setupGamePlay(){
-        console.log("Setup the game!");
-        this.setupPlayer();
-    }
-
+    /*
+     Shows the UI for the setup of the user. 
+     Random ship placement for the AI.
+     Calls ChangePlayer function with either PlayRound or SetupPlayer as argument.
+    */
     setupPlayer(){
         console.log("Setup Player")
-        //sidebar populate
-        this.displayCurrentPlayer('Setup',this.gameController.currentPlayer);
-        //Display grid
-        this.gameController.computerShipPlacement(this.gameController.currentPlayer);
-        this.displayGrid('nofog',this.gameController.currentPlayer, '.content');
-        //Add eventListeners
-        const container = document.querySelector(".content");
 
-        //Buttons
-        const btnContainer = document.createElement("div");
-        btnContainer.setAttribute("class","btnContainer");
-        const btnReGenerate = document.createElement("button");
-        btnReGenerate.textContent=`Random positions`;
+        if(this.multiplayer || this.state==0){
+            //sidebar populate
+            this.displayCurrentPlayer('Setup',this.gameController.currentPlayer);
+            //Display grid
+            this.gameController.computerShipPlacement(this.gameController.currentPlayer);
+            this.displayGrid('nofog',this.gameController.currentPlayer, '.content');
+            //Add eventListeners
+            const container = document.querySelector(".content");
 
-        btnReGenerate.addEventListener('click', (event) =>{
-            event.preventDefault();
-            container.innerHTML='';
-            this.gameController.currentPlayer.Gameboard.reset();
-            this.setupPlayer();
-        });
+            //Buttons
+            const btnContainer = document.createElement("div");
+            btnContainer.setAttribute("class","btnContainer");
+            const btnReGenerate = document.createElement("button");
+            btnReGenerate.textContent=`Random positions`;
 
-        const btnFinished = document.createElement("button");
-        btnFinished.textContent="Ready"
+            btnReGenerate.addEventListener('click', (event) =>{
+                event.preventDefault();
+                container.innerHTML='';
+                this.gameController.currentPlayer.Gameboard.reset();
+                this.setupPlayer();
+            });
 
-        btnFinished.addEventListener('click', (event)=>{
-            event.preventDefault();
-            this.state+=1; //needed persistent tracker to define function of button.
-            this.changePlayer(this.state>1?this.playRound.bind(this):this.setupPlayer.bind(this));
-        })
+            const btnFinished = document.createElement("button");
+            btnFinished.textContent="Ready"
 
-        btnContainer.appendChild(btnReGenerate);
-        btnContainer.appendChild(btnFinished);
-        container.appendChild(btnContainer);
+            btnFinished.addEventListener('click', (event)=>{
+                event.preventDefault();
+                this.state+=1; //needed persistent tracker to define function of button.
+                this.changePlayer(this.state>1?this.playRound.bind(this):this.setupPlayer.bind(this));
+            })
 
+            btnContainer.appendChild(btnReGenerate);
+            btnContainer.appendChild(btnFinished);
+            container.appendChild(btnContainer);
+        }
+        else{
+            this.gameController.computerShipPlacement(this.gameController.currentPlayer);
+            this.changePlayer(this.playRound.bind(this));
+        }
         
     }
 
+    /*
+    Checks if victory has been achieved after each 'displayRound', so both players have equal chances.
+    Then, if multiplayer, will prompt a screen so the players can pass the device.
+    Else, just execute callback
+    */
     changePlayer(callback){
 
         const container = document.querySelector(".content");
@@ -137,7 +153,7 @@ export class DOMController{
 
             container.appendChild(divEnd);
         }
-        else{
+        else if(this.multiplayer){
             console.log("Change Player");
             //Change player
             this.gameController.nextPlayer();
@@ -160,8 +176,16 @@ export class DOMController{
             btnContainer.appendChild(btnNextPlayer);
             container.appendChild(btnContainer);
         }
+        else{
+            this.gameController.nextPlayer();
+            container.innerHTML ='';
+            callback();
+        }
     }
 
+    /*
+    Helper function to display sidebar info
+    */
     displayCurrentPlayer(phase,player){
         const playerName= player.name;
         const sidebar = document.querySelector("#mySidebar");
@@ -174,10 +198,12 @@ export class DOMController{
 
     }
 
+    /*
+    Function to display the grids. Both for the enemy as for the player
+     */
     displayGrid(mode,player,element){
-        console.log("DisplayGrid");
         const container = document.querySelector(element);
-
+        let gameMode = mode;
         const gameEnv = document.createElement("div");
         gameEnv.setAttribute("class","gameEnv");
         for(let i=0;i<10;i++){
@@ -195,8 +221,6 @@ export class DOMController{
 
                 cell.setAttribute("class",`content-${celcontent}`)
 
-                
-
                 gameEnv.appendChild(cell);
             }
         }
@@ -204,23 +228,22 @@ export class DOMController{
         gameEnv.addEventListener('click', (event)=>{
             const clickedX = event.target.id.slice(4)[0];
             const clickedY = event.target.id.slice(4)[1];
-            if(mode==='nofog' || mode==='shot'){}
+            if(gameMode==='nofog' || gameMode==='shot'){}
             else{
-                console.log(clickedX+";"+clickedY);
                 player.Gameboard.receiveAttack(clickedX,clickedY);
                 const container = document.querySelector(".targetArea");
                 container.innerHTML = '';
-                this.displayGrid('',this.gameController.otherPlayer(),".targetArea");
-                mode='shot';
-                if(player.Gameboard.checkSunkFleet()){
-                    this.loss.push(player);
-                }
+                this.displayGrid('shot',this.gameController.otherPlayer(),".targetArea");
+               
                 const btnFinished = document.createElement("button");
                 btnFinished.textContent="Ready"
 
                  btnFinished.addEventListener('click', (event)=>{
                     event.preventDefault();
-                    this.changePlayer(this.playRound.bind(this));
+                    if(player.Gameboard.checkSunkFleet()){
+                        this.loss.push(player);
+                    }
+                    this.changePlayer(this.multiplayer?this.playRound.bind(this):this.aiPlayRound.bind(this));
                 })
 
                 container.appendChild(btnFinished);
@@ -230,6 +253,9 @@ export class DOMController{
         container.appendChild(gameEnv);
     }
 
+    /*
+    UI for gameplay.
+    */
     playRound(){
         console.log("PlayRound");
         //Update sidebar
@@ -267,6 +293,20 @@ export class DOMController{
         this.displayGrid('',this.gameController.otherPlayer(),".targetArea");
         //Add own grid on right div.
         this.displayGrid('nofog',this.gameController.currentPlayer,'.ownArea');
+    }
+
+    /**
+     * AI activity for playing a round;
+     */
+    aiPlayRound() {
+        const player= this.gameController.otherPlayer()
+        const playerBoard = player.Gameboard;
+        player.aiTargetting(playerBoard.receiveAttack.bind(playerBoard));
+        if(playerBoard.checkSunkFleet()){
+            this.loss.push(player);
+        }
+        
+        this.changePlayer(this.playRound.bind(this));
     }
 
     checkVictory() {
