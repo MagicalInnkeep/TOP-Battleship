@@ -8,10 +8,10 @@ export class GameController {
         this.player2 = new Player(name2, humanBool2);
         this.currentPlayer = this.player1;
         this.ships = [
-            /*{name:"Carrier",length:5},
+            {name:"Carrier",length:5},
             {name:"Battleship",length:4},
             {name:"Destroyer",length:3},
-            {name:"Submarine" ,length:3},*/
+            {name:"Submarine" ,length:3},
             {name:"PatrolBoat",length:2} 
         ]
     }

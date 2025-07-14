@@ -11,7 +11,10 @@
     --color-Destroyer:#FFF5BA;
     --color-Submarine:#AEEAFD;
     --color-PatrolBoat:#FFDAC1;
+    --color-BlueAction: #1D4ED8;
+    --color-RedAction: #DC2626;
 }
+
 
 /* Dark Mode */
 .dark-mode {
@@ -26,7 +29,9 @@
     --color-Battleship:#3EF8B3;
     --color-Destroyer:#FFF95B;
     --color-Submarine: #4FC3FF;
-    --color-PatrolBoat:#FF9E7C;;
+    --color-PatrolBoat:#FF9E7C;
+    --color-BlueAction: #60A5FA;
+    --color-RedAction: #F87171;
 }
 
 /* Apply to Body */
@@ -318,11 +323,11 @@ body {
     background-color: var(--color-PatrolBoat)!important;
 }
 .gameEnv>.content-hit {
-    background-color: red;
+    background-color: var(--color-RedAction)!important;
 }
 
 .gameEnv>.content-miss {
-    background-color: blue;
+    background-color: var(--color-BlueAction)!important;
 }
 
 .mainBattleScreen{

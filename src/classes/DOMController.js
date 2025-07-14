@@ -202,7 +202,8 @@ export class DOMController{
         sidebar.innerHTML='';
 
         const playerDisplay = document.createElement("div");
-        playerDisplay.textContent=`${phase}:   ${playerName}`;
+        const aiDisplay = this.multiplayer?'(AI) ':'';
+        playerDisplay.textContent=`${phase}:   ${aiDisplay}${playerName}`;
 
         sidebar.appendChild(playerDisplay);
 
